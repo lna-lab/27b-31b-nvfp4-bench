@@ -1,0 +1,96 @@
+# ============================================================================
+# MoE vs Dense — The Real Showdown
+# GPU 0: Huihui Gemma4 26B-A4B MoE (3.8B active)    port 8016
+# GPU 1: Huihui Qwen3.5-27B Dense (27B active)       port 8017
+# GPU 2: Huihui Gemma4-31B Dense (31B active)         port 8018
+# All: FP8 KV, 128K context
+# ============================================================================
+
+services:
+
+  moe-gemma4:
+    image: lna-lab/gemma4-inference:latest
+    container_name: moe-gemma4
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+      - MODEL_PATH=/models/current
+      - PORT=8016
+      - MAX_MODEL_LEN=131072
+      - MAX_NUM_SEQS=16
+      - GPU_MEMORY_UTILIZATION=0.95
+      - TENSOR_PARALLEL_SIZE=1
+      - QUANTIZATION=auto
+      - VLLM_CUDA_GRAPH_MODE=piecewise
+      - TRINITY_TURBO_ENABLED=0
+    volumes:
+      - /media/tonoken/Optane_DATA/Models/huihui-ai/Huihui-gemma-4-26B-A4B-it-abliterated-NVFP4-llmc:/models/current:ro
+    ports:
+      - "8016:8016"
+    command: ["--kv-cache-dtype", "fp8"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0"]
+              capabilities: [gpu]
+    shm_size: '16gb'
+
+  dense-qwen:
+    image: lna-lab/gemma4-inference:latest
+    container_name: dense-qwen
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=1
+      - MODEL_PATH=/models/current
+      - PORT=8017
+      - MAX_MODEL_LEN=131072
+      - MAX_NUM_SEQS=8
+      - GPU_MEMORY_UTILIZATION=0.95
+      - TENSOR_PARALLEL_SIZE=1
+      - QUANTIZATION=auto
+      - VLLM_CUDA_GRAPH_MODE=piecewise
+      - TRINITY_TURBO_ENABLED=0
+    volumes:
+      - /media/tonoken/Optane_DATA/Models/huihui-ai/Huihui-Qwen3.5-27B-abliterated-NVFP4:/models/current:ro
+    ports:
+      - "8017:8017"
+    command: ["--kv-cache-dtype", "fp8"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["1"]
+              capabilities: [gpu]
+    shm_size: '16gb'
+
+  dense-gemma31:
+    image: lna-lab/gemma4-inference:latest
+    container_name: dense-gemma31
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=2
+      - MODEL_PATH=/models/current
+      - PORT=8018
+      - MAX_MODEL_LEN=131072
+      - MAX_NUM_SEQS=4
+      - GPU_MEMORY_UTILIZATION=0.95
+      - TENSOR_PARALLEL_SIZE=1
+      - QUANTIZATION=auto
+      - VLLM_CUDA_GRAPH_MODE=piecewise
+      - TRINITY_TURBO_ENABLED=0
+    volumes:
+      - /media/tonoken/Optane_DATA/Models/huihui-ai/Huihui-gemma-4-31B-it-abliterated-v2-NVFP4:/models/current:ro
+    ports:
+      - "8018:8018"
+    command: ["--kv-cache-dtype", "fp8"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["2"]
+              capabilities: [gpu]
+    shm_size: '16gb'

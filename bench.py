@@ -24,29 +24,43 @@ import aiohttp
 # ── Models ───────────────────────────────────────────────────────────────────
 
 MODELS = {
-    "qwen": {
-        "name": "Huihui-Qwen3.5-27B-abliterated-NVFP4",
+    # MoE x3 (3.8B active per token)
+    "moe_redhat": {
+        "name": "RedHatAI Gemma4-26B MoE (official)",
         "url": "http://localhost:8016",
         "served_name": "current",
-        "desc": "Qwen3.5 27B Dense + MTP (Lna-Lab, TQ-ready)",
+        "desc": "Gemma4 MoE official (censored)",
     },
-    "qwopus": {
-        "name": "Huihui-Qwopus3.5-27B-v3-abliterated-NVFP4",
+    "moe_huihui": {
+        "name": "Huihui Gemma4-26B MoE (abliterated)",
         "url": "http://localhost:8017",
         "served_name": "current",
-        "desc": "Qwopus 27B Opus-distilled (Lna-Lab, TQ-ready)",
+        "desc": "Gemma4 MoE abliterated",
     },
-    "gemma31": {
-        "name": "Huihui-gemma-4-31B-it-abliterated-v2-NVFP4",
+    "moe_jiunsong": {
+        "name": "Jiunsong SuperGemma4-26B MoE (enhanced)",
         "url": "http://localhost:8018",
         "served_name": "current",
-        "desc": "Gemma4 31B Dense (Lna-Lab, TQ-ready)",
+        "desc": "SuperGemma4 MoE enhanced",
     },
-    "gemma31_lyf": {
-        "name": "lyf-Huihui-gemma-4-31B-it-abliterated-v2-NVFP4",
+    # Dense x3 (all params active)
+    "dense_qwen": {
+        "name": "Qwen3.5-27B Dense (27B active)",
         "url": "http://localhost:8019",
         "served_name": "current",
-        "desc": "Gemma4 31B Dense (lyf, no-TQ baseline)",
+        "desc": "Qwen3.5 27B Dense",
+    },
+    "dense_qwopus": {
+        "name": "Qwopus3.5-27B Dense (Opus distilled)",
+        "url": "http://localhost:8020",
+        "served_name": "current",
+        "desc": "Qwopus 27B Dense",
+    },
+    "dense_gemma31": {
+        "name": "Gemma4-31B Dense (31B active)",
+        "url": "http://localhost:8021",
+        "served_name": "current",
+        "desc": "Gemma4 31B Dense",
     },
 }
 
@@ -460,7 +474,7 @@ async def run_batch(model_key: str, test_name: str, concurrency: int) -> list[Re
 
 async def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--models", nargs="+", default=["qwen", "qwopus", "gemma31", "gemma31_lyf"])
+    parser.add_argument("--models", nargs="+", default=["moe_redhat", "moe_huihui", "moe_jiunsong", "dense_qwen", "dense_qwopus", "dense_gemma31"])
     parser.add_argument("--tests", nargs="+",
                         default=["english_critique", "japanese", "math", "coding", "design", "tool_call"])
     parser.add_argument("--concurrency", nargs="+", type=int, default=[1, 4])

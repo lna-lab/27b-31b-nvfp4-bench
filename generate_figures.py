@@ -9,12 +9,17 @@ import numpy as np
 matplotlib.use("Agg")
 plt.style.use("seaborn-v0_8-whitegrid")
 
-COLORS = {"qwen": "#1E88E5", "qwopus": "#8E24AA", "gemma31": "#43A047", "gemma31_lyf": "#78909C"}
+COLORS = {
+    "moe_redhat": "#B71C1C", "moe_huihui": "#E53935", "moe_jiunsong": "#FF7043",
+    "dense_qwen": "#1E88E5", "dense_qwopus": "#8E24AA", "dense_gemma31": "#43A047",
+}
 LABELS = {
-    "qwen": "Qwen3.5-27B (Lna-Lab)",
-    "qwopus": "Qwopus-27B (Lna-Lab)",
-    "gemma31": "Gemma4-31B (Lna-Lab)",
-    "gemma31_lyf": "Gemma4-31B (lyf)",
+    "moe_redhat": "RedHatAI MoE (official)",
+    "moe_huihui": "Huihui MoE (abliterated)",
+    "moe_jiunsong": "Jiunsong MoE (enhanced)",
+    "dense_qwen": "Qwen3.5-27B Dense",
+    "dense_qwopus": "Qwopus-27B Dense",
+    "dense_gemma31": "Gemma4-31B Dense",
 }
 
 with open("data.json") as f:
@@ -28,11 +33,11 @@ summary = data["summary"]
 def fig_quality():
     tests = ["english_critique", "japanese", "math", "coding", "design"]
     test_labels = ["English\nCritique", "Japanese\nExpression", "Math\nReasoning", "Coding", "System\nDesign"]
-    models = ["qwen", "qwopus", "gemma31", "gemma31_lyf"]
+    models = list(LABELS.keys())
 
     fig, ax = plt.subplots(figsize=(12, 6))
     x = np.arange(len(tests))
-    width = 0.2
+    width = 0.13
 
     for i, m in enumerate(models):
         scores = []
@@ -60,7 +65,7 @@ def fig_quality():
 # ── Fig 2: Per-request speed (x1 vs x4) ─────────────────────────────────────
 
 def fig_speed_per_request():
-    models = ["qwen", "qwopus", "gemma31", "gemma31_lyf"]
+    models = list(LABELS.keys())
     tests = ["english_critique", "japanese", "math", "coding", "design"]
 
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
@@ -68,7 +73,7 @@ def fig_speed_per_request():
     for ax_idx, conc in enumerate([1, 4]):
         ax = axes[ax_idx]
         x = np.arange(len(tests))
-        width = 0.2
+        width = 0.13
         for i, m in enumerate(models):
             speeds = []
             for t in tests:
@@ -91,7 +96,7 @@ def fig_speed_per_request():
 # ── Fig 3: Aggregate throughput scaling ──────────────────────────────────────
 
 def fig_throughput_scaling():
-    models = ["qwen", "qwopus", "gemma31", "gemma31_lyf"]
+    models = list(LABELS.keys())
     concurrencies = [1, 4]
 
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -129,7 +134,7 @@ def fig_throughput_scaling():
 # ── Fig 4: Latency distribution ──────────────────────────────────────────────
 
 def fig_latency():
-    models = ["qwen", "qwopus", "gemma31", "gemma31_lyf"]
+    models = list(LABELS.keys())
     results = data["results"]
 
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
@@ -163,13 +168,13 @@ def fig_latency():
 # ── Fig 5: Output length comparison ─────────────────────────────────────────
 
 def fig_output_length():
-    models = ["qwen", "qwopus", "gemma31", "gemma31_lyf"]
+    models = list(LABELS.keys())
     tests = ["english_critique", "japanese", "math", "coding", "design"]
     test_labels = ["English", "Japanese", "Math", "Coding", "Design"]
 
     fig, ax = plt.subplots(figsize=(12, 6))
     x = np.arange(len(tests))
-    width = 0.2
+    width = 0.13
 
     for i, m in enumerate(models):
         tokens = []
@@ -192,7 +197,7 @@ def fig_output_length():
 # ── Fig 6: Radar chart — overall profile ─────────────────────────────────────
 
 def fig_radar():
-    models = ["qwen", "qwopus", "gemma31", "gemma31_lyf"]
+    models = list(LABELS.keys())
     tests = ["english_critique", "japanese", "math", "coding", "design"]
     test_labels = ["English", "Japanese", "Math", "Coding", "Design"]
 
