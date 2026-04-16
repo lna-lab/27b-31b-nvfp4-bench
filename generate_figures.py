@@ -10,10 +10,12 @@ matplotlib.use("Agg")
 plt.style.use("seaborn-v0_8-whitegrid")
 
 COLORS = {
+    "moe_qwen36": "#FF6F00",
     "moe_redhat": "#B71C1C", "moe_huihui": "#E53935", "moe_jiunsong": "#FF7043",
     "dense_qwen": "#1E88E5", "dense_qwopus": "#8E24AA", "dense_gemma31": "#43A047",
 }
 LABELS = {
+    "moe_qwen36": "Qwen3.6-35B MoE (NEW)",
     "moe_redhat": "RedHatAI MoE (official)",
     "moe_huihui": "Huihui MoE (abliterated)",
     "moe_jiunsong": "Jiunsong MoE (enhanced)",
@@ -37,7 +39,7 @@ def fig_quality():
 
     fig, ax = plt.subplots(figsize=(12, 6))
     x = np.arange(len(tests))
-    width = 0.13
+    width = 0.11
 
     for i, m in enumerate(models):
         scores = []
@@ -73,7 +75,7 @@ def fig_speed_per_request():
     for ax_idx, conc in enumerate([1, 4]):
         ax = axes[ax_idx]
         x = np.arange(len(tests))
-        width = 0.13
+        width = 0.11
         for i, m in enumerate(models):
             speeds = []
             for t in tests:
@@ -174,7 +176,7 @@ def fig_output_length():
 
     fig, ax = plt.subplots(figsize=(12, 6))
     x = np.arange(len(tests))
-    width = 0.13
+    width = 0.11
 
     for i, m in enumerate(models):
         tokens = []

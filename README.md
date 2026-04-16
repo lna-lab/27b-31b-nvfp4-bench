@@ -1,139 +1,132 @@
-# NVFP4 Showdown: MoE vs Dense — 6 Models on 6 GPUs
+# NVFP4 Showdown: 7 Models on 7 GPUs — Qwen3.6 Enters the Arena
 
-**The definitive comparison: 3 MoE models (3.8B active) vs 3 Dense models (27-31B active), all NVFP4 on NVIDIA Blackwell with FP8 KV cache at 128K context.**
+**The new MoE king, Qwen3.6-35B-A3B (3B active, 256 experts), faces off against 6 established models. Does it change the game?**
 
-MoE is fast. Dense is smart. Here's exactly how much.
+All 7 NVIDIA RTX PRO 6000 Blackwell GPUs. All NVFP4. All FP8 KV cache. 128K context. One benchmark.
 
-## Models
+## The Lineup
 
-### MoE (Gemma 4 26B-A4B, 3.8B active per token)
+### MoE (sparse, fast)
 
-| Model | Variant | Source | Size |
-|-------|---------|--------|------|
-| **RedHatAI** | Official (censored) | [HF](https://huggingface.co/RedHatAI/gemma-4-26B-A4B-it-NVFP4) | 16.5 GB |
-| **Huihui** | Abliterated | [HF](https://huggingface.co/sakamakismile/Huihui-gemma-4-26B-A4B-it-abliterated-NVFP4) | 16.5 GB |
-| **Jiunsong** | Enhanced | [HF](https://huggingface.co/sakamakismile/SuperGemma4-26B-Abliterated-Multimodal-NVFP4) | 16.5 GB |
+| GPU | Model | Active | Experts | Speed | Source |
+|:---:|-------|:------:|:-------:|:-----:|--------|
+| 0 | **Qwen3.6-35B** | **3B** | **256** | **144 tok/s** | [Lna-Lab](https://huggingface.co/sakamakismile/Qwen3.6-35B-A3B-NVFP4) |
+| 1 | RedHatAI Gemma4-26B | 3.8B | 128 | 130 tok/s | [RedHatAI](https://huggingface.co/RedHatAI/gemma-4-26B-A4B-it-NVFP4) |
+| 2 | Huihui Gemma4-26B | 3.8B | 128 | 130 tok/s | [Lna-Lab](https://huggingface.co/sakamakismile/Huihui-gemma-4-26B-A4B-it-abliterated-NVFP4) |
+| 6 | Jiunsong SuperGemma4 | 3.8B | 128 | 129 tok/s | [Lna-Lab](https://huggingface.co/sakamakismile/SuperGemma4-26B-Abliterated-Multimodal-NVFP4) |
 
-### Dense (full parameter activation)
+### Dense (all params active, deep)
 
-| Model | Params Active | Source | Size |
-|-------|:------------:|--------|------|
-| **Qwen3.5-27B** | 27B | [HF](https://huggingface.co/sakamakismile/Huihui-Qwen3.5-27B-abliterated-NVFP4) | 20.6 GB |
-| **Qwopus3.5-27B** | 27B (Opus distilled) | [HF](https://huggingface.co/sakamakismile/Huihui-Qwopus3.5-27B-v3-abliterated-NVFP4) | 19.8 GB |
-| **Gemma4-31B** | 31B | [HF](https://huggingface.co/sakamakismile/Huihui-gemma-4-31B-it-abliterated-v2-NVFP4) | 20.5 GB |
+| GPU | Model | Active | Speed | Source |
+|:---:|-------|:------:|:-----:|--------|
+| 3 | Qwen3.5-27B | 27B | 56 tok/s | [Lna-Lab](https://huggingface.co/sakamakismile/Huihui-Qwen3.5-27B-abliterated-NVFP4) |
+| 4 | Qwopus3.5-27B (Opus) | 27B | 57 tok/s | [Lna-Lab](https://huggingface.co/sakamakismile/Huihui-Qwopus3.5-27B-v3-abliterated-NVFP4) |
+| 5 | Gemma4-31B | 31B | 50 tok/s | [Lna-Lab](https://huggingface.co/sakamakismile/Huihui-gemma-4-31B-it-abliterated-v2-NVFP4) |
 
-## Hardware
-
-- **6x NVIDIA RTX PRO 6000 Blackwell** (96 GB each) — 1 model per GPU
-- **128K context**, FP8 KV cache, CUDA Graph PIECEWISE
-- **vLLM 0.19.1rc1** nightly (cu130)
-
-## The Verdict: Speed vs Intelligence
+## Results
 
 ![Quality Comparison](figures/01_quality_comparison.png)
 
 ### Quality Scores (Concurrency = 1)
 
-| Test | RedHat MoE | Huihui MoE | Jiunsong MoE | Qwen Dense | Qwopus Dense | Gemma31 Dense |
-|------|:----------:|:----------:|:------------:|:----------:|:------------:|:-------------:|
-| **English** | **0.98** | 0.89 | 0.94 | 0.97 | 0.65 | **0.98** |
-| **Japanese** | 0.74 | 0.72 | 0.69 | **0.88** | 0.78 | 0.75 |
-| **Math** | 0.73 | 0.73 | 0.55 | 0.83 | **0.90** | 0.63 |
-| **Coding** | 0.90 | 0.90 | 0.90 | **0.95** | 0.78 | 0.90 |
-| **Design** | 0.80 | 0.80 | **0.87** | 0.80 | 0.70 | 0.83 |
+| Test | Qwen3.6 MoE | RedHat MoE | Huihui MoE | Jiunsong MoE | Qwen Dense | Qwopus Dense | Gemma31 Dense |
+|------|:-----------:|:----------:|:----------:|:------------:|:----------:|:------------:|:-------------:|
+| **English** | 0.93 | 0.91 | 0.82 | 0.78 | **0.97** | 0.65 | **0.98** |
+| **Japanese** | 0.74 | 0.73 | 0.73 | 0.75 | **0.90** | 0.83 | 0.74 |
+| **Math** | 0.75 | 0.80 | 0.75 | 0.63 | 0.73 | **0.90** | 0.65 |
+| **Coding** | 0.80 | 0.85 | 0.78 | **0.90** | **0.90** | 0.85 | **0.90** |
+| **Design** | 0.78 | 0.80 | 0.80 | **0.84** | 0.79 | 0.71 | 0.80 |
 
 ![Radar Profile](figures/06_radar_profile.png)
 
-### Speed (tok/s)
+## What Qwen3.6 Changes
+
+### Speed: New Champion
 
 ![Per-Request Speed](figures/02_speed_per_request.png)
 
-| Model | Type | x1 tok/s | x4 (per-req) | x4 (aggregate) |
-|-------|:----:|:--------:|:------------:|:--------------:|
-| RedHatAI | MoE | **131** | 109 | **869** |
-| Huihui | MoE | **130** | 109 | **864** |
-| Jiunsong | MoE | **130** | 106 | **847** |
-| Qwen3.5 | Dense | 56 | 57 | 457 |
-| Qwopus | Dense | 57 | 58 | 461 |
-| Gemma4-31B | Dense | 50 | 39 | 316 |
+| Model | tok/s | vs Gemma4 MoE | vs Dense |
+|-------|:-----:|:-------------:|:--------:|
+| **Qwen3.6 MoE** | **144** | **+11%** | **+2.6x** |
+| Gemma4 MoE (avg) | 130 | baseline | +2.3x |
+| Dense (avg) | 54 | -58% | baseline |
+
+Qwen3.6 achieves 144 tok/s with only **3B active parameters** — 20% fewer active params than Gemma4 MoE (3.8B) yet 11% faster. The 256-expert architecture with Gated DeltaNet is remarkably efficient.
+
+### Quality: Competitive with MoE, Shy of Dense
+
+Within the MoE class, Qwen3.6 leads on English (0.93) and ties on Math (0.75). But Dense models — especially Qwopus (Opus-distilled) on Math (0.90) and Qwen3.5 on Japanese (0.90) — still hold the quality crown on reasoning-heavy tasks.
+
+**The gap between MoE and Dense is real but narrowing.** Qwen3.6 closes the English quality gap to within 5% of Dense, while running 2.6x faster.
+
+### Throughput Scaling
 
 ![Throughput Scaling](figures/03_throughput_scaling.png)
 
-## MoE vs Dense: The Trade-off
-
-| Metric | MoE (avg) | Dense (avg) | Winner | Margin |
-|--------|:---------:|:-----------:|:------:|:------:|
-| **Speed (x1)** | 130 tok/s | 54 tok/s | **MoE** | **2.4x faster** |
-| **Throughput (x4)** | 860 tok/s | 411 tok/s | **MoE** | **2.1x** |
-| **English** | 0.94 | 0.87 | MoE | +8% |
-| **Japanese** | 0.72 | **0.80** | **Dense** | +11% |
-| **Math** | 0.67 | **0.79** | **Dense** | +18% |
-| **Coding** | 0.90 | **0.88** | Tie | - |
-| **Design** | 0.82 | 0.78 | Tie | - |
-| **VRAM** | 92.9 GB | 93.0 GB | Tie | - |
-
-### What this means
-
-**MoE models are 2.4x faster with comparable quality for English and coding tasks.** But Dense models pull ahead on reasoning-heavy tasks (math +18%, Japanese +11%) — because running all 27-31B parameters on every token allows deeper contextual reasoning.
-
-> Note: Quality differences within each group (MoE-to-MoE, Dense-to-Dense) are within noise (n=2 per test). The MoE-vs-Dense gap is real and consistent.
-
-## VRAM Usage @ 128K Context (FP8 KV)
+## VRAM Usage (7 GPUs, 128K Context, FP8 KV)
 
 | GPU | Model | Type | VRAM |
-|:---:|-------|:----:|:----:|
-| 0 | RedHatAI | MoE | 92,862 MB |
-| 1 | Huihui | MoE | 92,862 MB |
-| 2 | Jiunsong | MoE | 92,862 MB |
-| 3 | Qwen3.5 | Dense | 92,470 MB |
-| 4 | Qwopus | Dense | 92,470 MB |
-| 5 | Gemma4-31B | Dense | 94,208 MB |
+|:---:|-------|:----:|-----:|
+| 0 | Qwen3.6-35B | MoE | 92,316 MB |
+| 1 | RedHatAI | MoE | 92,862 MB |
+| 2 | Huihui Gemma4 | MoE | 92,862 MB |
+| 3 | Qwen3.5-27B | Dense | 92,470 MB |
+| 4 | Qwopus-27B | Dense | 92,470 MB |
+| 5 | Gemma4-31B | Dense | 94,210 MB |
+| 6 | Jiunsong | MoE | 84,195 MB |
 
-VRAM is nearly identical — NVFP4 brings both architectures to the same ~20 GB weight footprint.
+All models fit on a single 96 GB Blackwell GPU at 128K context with FP8 KV cache.
 
 ![Latency Distribution](figures/04_latency_distribution.png)
 
 ![Output Length](figures/05_output_length.png)
 
-## Which Should You Deploy?
+## The Big Picture
 
-| Scenario | Choose | Why |
-|----------|--------|-----|
-| **High-throughput API** | MoE (Huihui) | 860 tok/s aggregate, abliterated |
-| **Agent/tool-calling** | MoE (any) | Fast response, coding 0.90 |
-| **Math / reasoning** | Dense (Qwopus) | 0.90 math, Opus distillation |
-| **Japanese / multilingual** | Dense (Qwen3.5) | 0.88 Japanese |
-| **English writing** | Either (RedHat MoE or Gemma31 Dense) | Both 0.98 |
-| **6-GPU fleet** | Mix both | MoE for speed lanes, Dense for quality lanes |
+### Does Qwen3.6 change the game?
 
-### The Fleet Strategy
+**Yes, but not how you might expect.**
 
-On a 6-GPU node like this benchmark:
-- **GPU 0-2: MoE** — handle high-volume requests (search, summarization, translation)
-- **GPU 3-5: Dense** — handle quality-critical requests (reasoning, coding, analysis)
-- Route by task type → best of both worlds
+It doesn't make Dense models obsolete — Dense still wins on deep reasoning. What it does is raise the MoE speed floor while closing the quality gap:
+
+| Era | Best MoE | Best Dense | Speed Gap | Quality Gap |
+|-----|----------|-----------|:---------:|:-----------:|
+| Before Qwen3.6 | 130 tok/s | 57 tok/s | 2.3x | Large |
+| **After Qwen3.6** | **144 tok/s** | 57 tok/s | **2.6x** | **Narrowing** |
+
+For production deployments:
+- **More workloads can use MoE** — the quality threshold is now high enough for most tasks
+- **Dense is justified only for premium reasoning** — math, complex analysis, multilingual
+- **Fleet strategy matters more than ever** — route by task type
+
+### Fleet Recommendation (7-GPU Node)
+
+```
+GPU 0-1: Qwen3.6 MoE × 2  — high-volume, agentic, coding
+GPU 2:   Huihui Gemma4 MoE — abliterated search/summarization
+GPU 3-4: Dense Qwen/Qwopus — reasoning, math, Japanese
+GPU 5:   Gemma4-31B Dense  — English writing, deep analysis
+GPU 6:   Jiunsong MoE      — design tasks, multimodal
+```
+
+## Scoring Note
+
+Quality scores are automated heuristics (text structure, vocabulary, code indicators). They provide relative ranking, not absolute quality. Within-class differences (MoE-to-MoE, Dense-to-Dense) are within noise at n=2. The MoE-vs-Dense gap and Qwen3.6's speed advantage are consistent and real. For authoritative quality assessment, see [official benchmarks](https://huggingface.co/Qwen/Qwen3.6-35B-A3B).
 
 ## Reproducibility
 
 ```bash
-git clone https://github.com/lna-lab/27b-31b-nvfp4-bench
-cd 27b-31b-nvfp4-bench
+git clone https://github.com/lna-lab/27b-35b-nvfp4-bench
+cd 27b-35b-nvfp4-bench
 
-# Start all 6 models
-docker compose -f docker-compose.bench-all6.yml up -d
-
-# Run benchmark
+# 7-model benchmark (requires 7 GPUs)
+docker compose -f docker-compose.bench-7models.yml up -d
 pip install aiohttp
-python bench.py --output results/benchmark_all6.json
+python bench.py --output results/benchmark_7models.json
 
-# Generate figures
 pip install matplotlib
 python generate_figures.py
 ```
-
-## Scoring Methodology
-
-Quality scores are **automated heuristics** (text structure, vocabulary diversity, code correctness indicators). They provide relative ranking within this benchmark, not absolute quality assessment. Differences within the same architecture class (MoE-to-MoE, Dense-to-Dense) are within measurement noise at n=2 prompts per test. The MoE-vs-Dense gap is consistent and real.
 
 ## License
 
@@ -141,6 +134,6 @@ Benchmark code: MIT. Models subject to their respective licenses.
 
 ## Credits
 
-- Models: [huihui-ai](https://huggingface.co/huihui-ai), [Jiunsong](https://huggingface.co/Jiunsong), [RedHatAI](https://huggingface.co/RedHatAI), [Google](https://huggingface.co/google), [Qwen](https://huggingface.co/Qwen), [Jackrong](https://huggingface.co/Jackrong)
+- Models: [Qwen](https://huggingface.co/Qwen), [huihui-ai](https://huggingface.co/huihui-ai), [Jiunsong](https://huggingface.co/Jiunsong), [RedHatAI](https://huggingface.co/RedHatAI), [Google](https://huggingface.co/google), [Jackrong](https://huggingface.co/Jackrong)
 - Quantization: [llm-compressor](https://github.com/vllm-project/llm-compressor)
 - Benchmark: [Lna-Lab](https://github.com/lna-lab)

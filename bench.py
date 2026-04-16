@@ -24,26 +24,26 @@ import aiohttp
 # ── Models ───────────────────────────────────────────────────────────────────
 
 MODELS = {
-    # MoE x3 (3.8B active per token)
+    # MoE — 4 challengers
+    "moe_qwen36": {
+        "name": "Qwen3.6-35B MoE (3B active)",
+        "url": "http://localhost:8016",
+        "served_name": "current",
+        "desc": "NEW — Qwen3.6 MoE 256 experts",
+    },
     "moe_redhat": {
         "name": "RedHatAI Gemma4-26B MoE (official)",
-        "url": "http://localhost:8016",
+        "url": "http://localhost:8017",
         "served_name": "current",
         "desc": "Gemma4 MoE official (censored)",
     },
     "moe_huihui": {
         "name": "Huihui Gemma4-26B MoE (abliterated)",
-        "url": "http://localhost:8017",
+        "url": "http://localhost:8018",
         "served_name": "current",
         "desc": "Gemma4 MoE abliterated",
     },
-    "moe_jiunsong": {
-        "name": "Jiunsong SuperGemma4-26B MoE (enhanced)",
-        "url": "http://localhost:8018",
-        "served_name": "current",
-        "desc": "SuperGemma4 MoE enhanced",
-    },
-    # Dense x3 (all params active)
+    # Dense — 3 incumbents + 1 MoE veteran on GPU 6
     "dense_qwen": {
         "name": "Qwen3.5-27B Dense (27B active)",
         "url": "http://localhost:8019",
@@ -61,6 +61,12 @@ MODELS = {
         "url": "http://localhost:8021",
         "served_name": "current",
         "desc": "Gemma4 31B Dense",
+    },
+    "moe_jiunsong": {
+        "name": "Jiunsong SuperGemma4-26B MoE (enhanced)",
+        "url": "http://localhost:8022",
+        "served_name": "current",
+        "desc": "SuperGemma4 MoE enhanced",
     },
 }
 
@@ -474,7 +480,7 @@ async def run_batch(model_key: str, test_name: str, concurrency: int) -> list[Re
 
 async def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--models", nargs="+", default=["moe_redhat", "moe_huihui", "moe_jiunsong", "dense_qwen", "dense_qwopus", "dense_gemma31"])
+    parser.add_argument("--models", nargs="+", default=["moe_qwen36", "moe_redhat", "moe_huihui", "dense_qwen", "dense_qwopus", "dense_gemma31", "moe_jiunsong"])
     parser.add_argument("--tests", nargs="+",
                         default=["english_critique", "japanese", "math", "coding", "design", "tool_call"])
     parser.add_argument("--concurrency", nargs="+", type=int, default=[1, 4])
